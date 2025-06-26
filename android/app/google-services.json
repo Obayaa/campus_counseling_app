@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "1071502381770",
+    "project_id": "campus-counselling-app",
+    "storage_bucket": "campus-counselling-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1071502381770:android:8d29fbfc6090df2d3f5a33",
+        "android_client_info": {
+          "package_name": "com.example.campus_counseling_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1071502381770-mfdb4scvbdqit9hfo5eptr8onq58npfe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQF82WD6NSgY6ZJ1hxzJ6BP6Qw30HDWs0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1071502381770-mfdb4scvbdqit9hfo5eptr8onq58npfe.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1071502381770-u81pbdgnvtcccnd8mrfjvntbr0m7lg2b.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.campusCounselingApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
