@@ -19,7 +19,7 @@ class _CounselorDashboardContentScreenState
   // Data state
   String counselorName = "Counselor";
   String counselorId = "";
-  List<QueryDocumentSnapshot> todaysAppointments = [];
+  List<QueryDocumentSnapshot> upcomingAppointments = [];
   List<QueryDocumentSnapshot> overdueAppointments = [];
   List<QueryDocumentSnapshot> allAppointments = [];
   List<QueryDocumentSnapshot> activeChats = [];
@@ -63,7 +63,7 @@ class _CounselorDashboardContentScreenState
 
       // Filter appointments
       // Filter upcoming appointments (from now onwards and approved)
-      todaysAppointments =
+      upcomingAppointments =
           appointments.where((doc) {
             final data = doc.data() as Map<String, dynamic>;
             if (data['status'] != 'approved') return false;
@@ -242,7 +242,7 @@ class _CounselorDashboardContentScreenState
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            _buildTodaysAppointments(),
+            _buildUpcomingAppointments(),
 
             const SizedBox(height: 16),
             _buildStatisticsCards(),
@@ -333,8 +333,8 @@ class _CounselorDashboardContentScreenState
     );
   }
 
-  Widget _buildTodaysAppointments() {
-    if (todaysAppointments.isEmpty) {
+  Widget _buildUpcomingAppointments() {
+    if (upcomingAppointments.isEmpty) {
       return Card(
         color: Colors.grey.shade100,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -352,7 +352,7 @@ class _CounselorDashboardContentScreenState
 
     return Column(
       children:
-          todaysAppointments.map((doc) {
+          upcomingAppointments.map((doc) {
             final data = doc.data() as Map<String, dynamic>;
             final startTimestamp = data['startTime'] as Timestamp;
             final appointmentDate = startTimestamp.toDate();
