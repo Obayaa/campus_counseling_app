@@ -1,6 +1,5 @@
 // ignore_for_file: unused_field
 
-import 'package:campus_counseling_app/services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -107,12 +106,6 @@ class _BookScreenState extends State<BookScreen> {
       );
       return;
     }
-
-    await showLocalNotification(
-      title: "New Appointment Request",
-      body:
-          "Student booked a session with $selectedCounselor ($counselingType)",
-    );
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('anonymous_uid', user!.uid); // Now safe to use !
@@ -381,17 +374,7 @@ class _BookScreenState extends State<BookScreen> {
                 ),
                 child: const Text("Confirm Appointment"),
               ),
-
               const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  showLocalNotification(
-                    title: "Test Notification",
-                    body: "This is a local notification test.",
-                  );
-                },
-                child: Text("Send Test Notification"),
-              ),
             ],
           ),
         ),
