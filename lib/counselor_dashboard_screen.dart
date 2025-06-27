@@ -3,7 +3,6 @@
 import 'dart:convert';
 
 import 'package:campus_counseling_app/counselor_profile_screen.dart';
-import 'package:campus_counseling_app/services/notification_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:campus_counseling_app/CounselorChatScreen.dart';
 import 'package:campus_counseling_app/counselor_bookings_screen.dart';
@@ -118,40 +117,6 @@ class _CounselorDashboardScreenState extends State<CounselorDashboardScreen> {
             ),
           ),
     );
-  }
-
-  Set<String> _notifiedAppointments = {};
-
-  void _listenForAppointments() {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
-
-    FirebaseFirestore.instance
-        .collection('appointments')
-        .where('counselorId', isEqualTo: user.uid)
-        .snapshots()
-        .listen((snapshot) {
-          for (var change in snapshot.docChanges) {
-            if (change.type == DocumentChangeType.added) {
-              final data = change.doc.data();
-              if (data == null) continue;
-
-              final studentName = data['studentName'] ?? 'A student';
-              final counselingType = data['counselingType'] ?? 'session';
-
-              showLocalNotification(
-                title: "New Appointment",
-                body: "$studentName booked a $counselingType.",
-              );
-            }
-          }
-        });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _listenForAppointments();
   }
 
   @override
