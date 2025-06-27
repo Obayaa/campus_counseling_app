@@ -1,27 +1,25 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:logger/logger.dart';
-
-import 'package:campus_counseling_app/services/notification_service.dart';
-import 'package:campus_counseling_app/utils/navigation_service.dart';
-
-// Screens
-import 'package:campus_counseling_app/splash_screen.dart';
 import 'package:campus_counseling_app/welcome_screen.dart';
-import 'package:campus_counseling_app/role_selection_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:campus_counseling_app/counselor_signup_screen.dart';
 import 'package:campus_counseling_app/student_dashboard_screen.dart';
 import 'package:campus_counseling_app/student_login_screen.dart';
+import 'package:campus_counseling_app/splash_screen.dart';
+import 'package:campus_counseling_app/utils/navigation_service.dart';
 import 'package:campus_counseling_app/counselor_login_screen.dart';
-import 'package:campus_counseling_app/counselor_signup_screen.dart';
-import 'package:campus_counseling_app/book_screen.dart';
+
 import 'package:campus_counseling_app/counselor_dashboard_screen.dart';
 import 'package:campus_counseling_app/counselor_bookings_screen.dart';
-import 'package:campus_counseling_app/student_chat_screen.dart';
 import 'package:campus_counseling_app/CounselorInChatScreen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:campus_counseling_app/student_chat_screen.dart';
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
+
+import 'book_screen.dart';
+import 'role_selection_screen.dart';
 
 final logger = Logger();
 
@@ -46,7 +44,6 @@ void main() async {
     );
   } else {
     await Firebase.initializeApp();
-    await initializeLocalNotifications(); // ✅ local notifications
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
 
@@ -67,6 +64,8 @@ class CampusCounsellingApp extends StatelessWidget {
         useMaterial3: true,
       ),
       initialRoute: '/splashscreen',
+
+      // Static routes
       routes: {
         '/splashscreen': (context) => const SplashScreen(),
         '/home': (context) => const HomePage(),
@@ -77,9 +76,13 @@ class CampusCounsellingApp extends StatelessWidget {
         '/role-selection': (context) => const RoleSelectionScreen(),
         '/student_dashboard_screen':
             (context) => const StudentDashboardScreen(),
-        '/student_chat': (context) => const StudentChatScreen(),
+        '/student_chat':
+            (context) =>
+                // const StudentChatScreen(appointmentId: '', counselorName: ''),
+                const StudentChatScreen(),
         '/book_screen': (context) => const BookScreen(),
         '/welcome': (context) => const WelcomeScreen(),
+
         '/counselor_dashboard': (context) => const CounselorDashboardScreen(),
         '/counselor_bookings': (context) {
           final currentUser = FirebaseAuth.instance.currentUser;
@@ -88,6 +91,7 @@ class CampusCounsellingApp extends StatelessWidget {
           }
           return CounselorBookingsScreen(counselorId: currentUser.uid);
         },
+        // '/counselor_chat_history': (context) => const CounselorChatScreen(counselorId: counselorId),
         '/counselor_in_chat':
             (context) => const CounselorInChatScreen(
               studentName: '',
@@ -96,11 +100,11 @@ class CampusCounsellingApp extends StatelessWidget {
               counselorId: '',
             ),
       },
+
+      // ✅ Dynamic routes for chat screen and others needing arguments
       onGenerateRoute: (settings) {
         if (settings.name == '/student_chat') {
-          return MaterialPageRoute(
-            builder: (context) => const StudentChatScreen(),
-          );
+          return MaterialPageRoute(builder: (context) => StudentChatScreen());
         }
 
         if (settings.name == '/counselor_in_chat') {
@@ -161,16 +165,20 @@ class _HomePageState extends State<HomePage> {
 
         logger.i('Foreground message: ${message.notification?.title}');
         if (message.notification != null) {
-          showLocalNotification(
-            title: message.notification!.title ?? 'New Notification',
-            body: message.notification!.body ?? '',
-          );
+          final title = message.notification!.title ?? 'No Title';
+          final body = message.notification!.body ?? 'No Body';
+
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('$title\n$body')));
         }
       });
 
       FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-        logger.i('Notification opened: ${message.notification?.title}');
-        // Add navigation here if needed
+        logger.i(
+          'Notification caused app to open: ${message.notification?.title}',
+        );
+        // Navigation logic can go here
       });
     } catch (e) {
       logger.e('Error setting up Firebase Messaging: $e');
@@ -180,8 +188,16 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('CampusCounselling')),
-      body: const Center(child: Text('Welcome to CampusCounselling App!')),
+      appBar: AppBar(
+        title: const Text('CampusCounselling'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+      ),
+      body: const Center(
+        child: Text(
+          'Welcome to CampusCounselling App!',
+          style: TextStyle(fontSize: 18),
+        ),
+      ),
     );
   }
 }
